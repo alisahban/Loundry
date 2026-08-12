@@ -18,43 +18,44 @@
     </script>
 
     <style>
-        /* Desain Print Khusus Struk Kasir / Thermal 58mm atau 80mm */
         @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
+            body * { visibility: hidden !important; }
+            #print-area, #print-area * { visibility: visible !important; }
             #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                color: black !important;
             }
-            @page { size: auto; margin: 2mm; } /* Mencegah halaman kosong tambahan */
+            @page { size: auto; margin: 2mm; } 
             .no-print { display: none !important; }
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Notifikasi -->
     <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 hidden bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transition">
         <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white"><i class="fa-solid fa-check text-sm"></i></div>
         <span id="toast-message" class="text-sm font-semibold">Tersimpan!</span>
     </div>
 
-    <!-- HEADER & MENU -->
     <header class="bg-indigo-600 text-white sticky top-0 z-40 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-white/20 p-2 rounded-lg"><i class="fa-solid fa-shirt text-lg"></i></div>
+                <div id="nav-logo-box" class="w-10 h-10 rounded-xl bg-white/20 overflow-hidden flex items-center justify-center shadow-inner">
+                    <i id="nav-default-icon" class="fa-solid fa-shirt text-lg"></i>
+                    <img id="nav-custom-logo" src="" class="w-full h-full object-cover hidden" alt="Logo">
+                </div>
                 <div>
                     <h1 class="text-sm font-bold tracking-wide uppercase" id="nav-brand-name">LaundryKu</h1>
                     <p class="text-[10px] text-indigo-200">Sistem Kasir Offline</p>
                 </div>
             </div>
             
-            <!-- Tombol Navigasi -->
             <div class="flex space-x-1 bg-indigo-700/50 p-1 rounded-xl overflow-x-auto w-full sm:w-auto">
                 <button onclick="switchView('portal')" id="btn-portal" class="px-3 py-2 text-xs rounded-lg bg-white text-indigo-600 font-bold whitespace-nowrap transition">
                     <i class="fa-solid fa-house"></i> Depan
@@ -74,11 +75,16 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
 
-        <!-- VIEW 1: PORTAL DEPAN (Untuk Lacak & Info Harga) -->
         <div id="view-portal" class="space-y-6">
-            <div class="bg-indigo-900 rounded-3xl p-8 text-center text-white shadow-lg bg-cover bg-center" id="hero-banner" style="background-image: linear-gradient(rgba(49, 46, 129, 0.9), rgba(49, 46, 129, 0.9)), url('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1200&q=80');">
-                <h2 class="text-3xl font-extrabold mb-2" id="hero-title">LaundryKu Express</h2>
-                <p class="text-indigo-200 text-sm max-w-lg mx-auto" id="hero-subtitle">Bersih, Wangi, Rapi, dan Tepat Waktu.</p>
+            <div class="bg-indigo-900 rounded-3xl p-8 text-center text-white shadow-lg bg-cover bg-center transition-all duration-300 relative overflow-hidden" id="hero-banner" style="background-image: linear-gradient(rgba(49, 46, 129, 0.85), rgba(49, 46, 129, 0.85)), url('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1200&q=80');">
+                <div class="relative z-10 flex flex-col items-center justify-center space-y-3">
+                    <div id="hero-logo-box" class="w-20 h-20 rounded-2xl bg-white/20 p-1 shadow-xl overflow-hidden flex items-center justify-center border-2 border-white/30">
+                        <i id="hero-default-icon" class="fa-solid fa-shirt text-3xl"></i>
+                        <img id="hero-custom-logo" src="" class="w-full h-full object-cover rounded-xl hidden" alt="Hero Logo">
+                    </div>
+                    <h2 class="text-3xl font-extrabold mb-1" id="hero-title">LaundryKu Express</h2>
+                    <p class="text-indigo-200 text-sm max-w-lg mx-auto" id="hero-subtitle">Bersih, Wangi, Rapi, dan Tepat Waktu.</p>
+                </div>
             </div>
 
             <!-- Cek Resi -->
@@ -91,21 +97,20 @@
                 <div id="track-result" class="hidden mt-4 pt-4 border-t border-slate-100"></div>
             </div>
 
-            <!-- Daftar Harga -->
+            <!-- Daftar Harga / Layanan Dinamis -->
             <div>
-                <h3 class="font-bold text-lg text-center mb-4 text-slate-800">Daftar Harga Layanan</h3>
+                <h3 class="font-bold text-lg text-center mb-4 text-slate-800">Daftar Layanan & Harga</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="price-grid">
-                    <!-- Diisi via JS -->
+                    <!-- Diisi via JS dinamis -->
                 </div>
             </div>
         </div>
 
-        <!-- VIEW 2: KASIR / POS -->
         <div id="view-kasir" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800">Kasir Transaksi</h2>
-                    <p class="text-xs text-slate-500">Catat pesanan masuk baru.</p>
+                    <p class="text-xs text-slate-500">Catat pesanan masuk baru berdasarkan layanan kustom toko.</p>
                 </div>
                 <button onclick="openOrderModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-indigo-700 transition">
                     + Buat Pesanan
@@ -118,7 +123,7 @@
                         <thead class="bg-slate-50 border-b border-slate-200">
                             <tr>
                                 <th class="p-4 text-xs font-bold text-slate-500 uppercase">Resi & Pelanggan</th>
-                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Layanan & Berat</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Layanan & Jumlah</th>
                                 <th class="p-4 text-xs font-bold text-slate-500 uppercase">Total</th>
                                 <th class="p-4 text-xs font-bold text-slate-500 uppercase">Status</th>
                                 <th class="p-4 text-center text-xs font-bold text-slate-500 uppercase">Aksi</th>
@@ -132,7 +137,6 @@
             </div>
         </div>
 
-        <!-- VIEW 3: LAPORAN -->
         <div id="view-laporan" class="hidden space-y-6">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-xl font-bold text-slate-800">Laporan Keuangan</h2>
@@ -155,12 +159,11 @@
             </div>
         </div>
 
-        <!-- VIEW 4: PENGATURAN -->
         <div id="view-settings" class="hidden space-y-6 max-w-3xl mx-auto">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Pengaturan Toko & Harga</h2>
-                    <p class="text-xs text-slate-500">Data tersimpan otomatis di perangkat ini (Offline Mode).</p>
+                    <h2 class="text-xl font-bold text-slate-800">Pengaturan Toko, Logo, Banner & Master Layanan</h2>
+                    <p class="text-xs text-slate-500">Tambah, ubah, atau hapus jenis layanan (seperti Cuci Kering, Sepatu, Helm, Boneka, dll.) beserta tarifnya sesuai riset spanduk laundry Anda.</p>
                 </div>
 
                 <form onsubmit="saveSettings(event)" class="space-y-4">
@@ -174,39 +177,33 @@
                             <input type="text" id="set-sub" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none focus:border-indigo-500 text-sm">
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Upload Logo Toko (File Explorer / Galeri)</label>
+                            <input type="file" id="set-logo-file" accept="image/*" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Upload Banner Hero (File Explorer / Galeri)</label>
+                            <input type="file" id="set-banner-file" accept="image/*" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-slate-50">
+                        </div>
+                    </div>
                     
                     <hr class="my-4">
-                    <h3 class="text-sm font-bold text-indigo-600">Master Harga (Rp) - Mengunci Input Kasir</h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-indigo-600">Daftar Layanan & Tarif Fleksibel</h3>
+                        <button type="button" onclick="addServiceRow()" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-100 transition">
+                            + Tambah Layanan Baru
+                        </button>
+                    </div>
                     
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Reguler (/kg)</label>
-                            <input type="number" id="set-p-reg" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Express (/kg)</label>
-                            <input type="number" id="set-p-exp" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bedcover (/pcs)</label>
-                            <input type="number" id="set-p-bed" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Sprei (/pcs)</label>
-                            <input type="number" id="set-p-spr" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Selimut (/pcs)</label>
-                            <input type="number" id="set-p-sel" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Boneka (/pcs)</label>
-                            <input type="number" id="set-p-bon" required class="w-full px-3 py-2 rounded-lg border border-slate-300 outline-none text-sm">
-                        </div>
+                    <!-- Container Daftar Layanan Dinamis -->
+                    <div id="services-config-container" class="space-y-3">
+                        <!-- Diisi JS -->
                     </div>
 
                     <button type="submit" class="w-full py-3 mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">
-                        Simpan Pengaturan
+                        Simpan Pengaturan Toko & Layanan
                     </button>
                 </form>
             </div>
@@ -214,7 +211,6 @@
 
     </main>
 
-    <!-- MODAL TRANSAKSI KASIR -->
     <div id="order-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 class="text-xl font-bold text-slate-800 mb-4">Buat Transaksi Baru</h3>
@@ -232,13 +228,13 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">Pilih Layanan (Harga Terkunci)</label>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Pilih Layanan</label>
                         <select id="ord-service" onchange="calcTotal()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm outline-none">
-                            <!-- Diisi JS -->
+                            <!-- Diisi JS dari data layanan dinamis -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">Jumlah / Berat</label>
+                        <label class="block text-xs font-bold text-slate-500 mb-1" id="ord-qty-label">Jumlah / Berat</label>
                         <input type="number" step="0.5" id="ord-qty" required oninput="calcTotal()" value="1" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-indigo-500">
                     </div>
                 </div>
@@ -256,6 +252,7 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Estimasi Selesai</label>
                         <select id="ord-estimasi" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm outline-none">
+                            <option>4 Jam Kilat</option>
                             <option>1 Hari (24 Jam)</option>
                             <option>2 Hari (48 Jam)</option>
                             <option>3 Hari (Reguler)</option>
@@ -276,44 +273,46 @@
         </div>
     </div>
 
-    <!-- AREA CETAK STRUK THERMAL (DUAL COPY) -->
     <div id="print-area" class="hidden bg-white text-black p-0 m-0">
-        <div style="font-family: monospace; font-size: 11px; width: 100%; max-width: 250px; line-height: 1.2;">
-            
-            <!-- COPY CUSTOMER -->
-            <div style="text-align: center; border-bottom: 1px dashed black; padding-bottom: 4px; margin-bottom: 4px;">
-                <h3 id="print-name1" style="margin: 0; font-size: 14px; font-weight: bold;">LaundryKu</h3>
-                <p style="margin: 2px 0 0; font-size: 9px;">Nota Pelanggan</p>
+        <div style="font-family: monospace; font-size: 9px; width: 100%; max-width: 270px; line-height: 1.15;">
+            <div style="text-align: center; border-bottom: 1px dashed black; padding-bottom: 2px; margin-bottom: 2px;">
+                <h3 id="print-name1" style="margin: 0; font-size: 11px; font-weight: bold;">LaundryKu</h3>
+                <p style="margin: 1px 0 0; font-size: 7px;">NOTA PELANGGAN</p>
             </div>
             <div id="print-content1"></div>
-            <div style="text-align: center; margin-top: 5px; font-size: 9px;">
-                <p style="margin: 0;">Terima kasih! Harap bawa nota ini.</p>
-            </div>
-
-            <div style="border-top: 1px dashed black; margin: 15px 0;"></div>
-
-            <!-- COPY TOKO -->
-            <div style="text-align: center; border-bottom: 1px dashed black; padding-bottom: 4px; margin-bottom: 4px;">
-                <h3 id="print-name2" style="margin: 0; font-size: 14px; font-weight: bold;">LaundryKu</h3>
-                <p style="margin: 2px 0 0; font-size: 9px;">Arsip Toko (Tempel di plastik)</p>
+            <div style="border-top: 1px dashed black; margin: 4px 0;"></div>
+            <div style="text-align: center; border-bottom: 1px dashed black; padding-bottom: 2px; margin-bottom: 2px;">
+                <h3 id="print-name2" style="margin: 0; font-size: 11px; font-weight: bold;">LaundryKu</h3>
+                <p style="margin: 1px 0 0; font-size: 7px;">ARSIP TOKO (Tempel di Plastik)</p>
             </div>
             <div id="print-content2"></div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT & LOCALSTORAGE LOGIC -->
     <script>
         const formatRp = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
 
-        // DEFAULT DATA (Jika baru pertama kali buka)
         const DEFAULT_CONFIG = {
-            name: "LaundryKu Express",
-            subtitle: "Bersih, Wangi, Rapi, dan Tepat Waktu.",
-            prices: { reg: 6000, exp: 10000, bed: 25000, spr: 15000, sel: 15000, bon: 10000 }
+            name: "Sahi Laundry 2",
+            subtitle: "Bersih, Rapi dan Wangi | 4 Jam Siap",
+            logo: "",
+            banner: "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1200&q=80",
+            services: [
+                { name: "Cuci Setrika", price: 6000, unit: "kg", icon: "fa-shirt" },
+                { name: "Cuci Kering", price: 5000, unit: "kg", icon: "fa-wind" },
+                { name: "Cuci Express", price: 10000, unit: "kg", icon: "fa-bolt" },
+                { name: "Setrika Saja", price: 4000, unit: "kg", icon: "fa-iron" },
+                { name: "Bed Cover", price: 25000, unit: "pcs", icon: "fa-bed" },
+                { name: "Selimut", price: 15000, unit: "pcs", icon: "fa-rug" },
+                { name: "Boneka", price: 12000, unit: "pcs", icon: "fa-child" },
+                { name: "Sepatu / Tas", price: 30000, unit: "pasang", icon: "fa-shoe-prints" },
+                { name: "Helm", price: 15000, unit: "pcs", icon: "fa-helmet-safety" }
+            ]
         };
 
-        // Mengambil data dari LocalStorage (Agar bisa Jual Putus Offline)
         let storeConfig = JSON.parse(localStorage.getItem('laundry_config')) || DEFAULT_CONFIG;
+        if (!storeConfig.services) storeConfig.services = DEFAULT_CONFIG.services;
+
         let orders = JSON.parse(localStorage.getItem('laundry_orders')) || [];
 
         function saveToStorage() {
@@ -330,6 +329,32 @@
             document.getElementById('nav-brand-name').innerText = storeConfig.name;
             document.getElementById('hero-title').innerText = storeConfig.name;
             document.getElementById('hero-subtitle').innerText = storeConfig.subtitle;
+            
+            const navIcon = document.getElementById('nav-default-icon');
+            const navLogo = document.getElementById('nav-custom-logo');
+            if (storeConfig.logo) {
+                navLogo.src = storeConfig.logo;
+                navLogo.classList.remove('hidden');
+                navIcon.classList.add('hidden');
+            } else {
+                navLogo.classList.add('hidden');
+                navIcon.classList.remove('hidden');
+            }
+
+            const heroIcon = document.getElementById('hero-default-icon');
+            const heroLogo = document.getElementById('hero-custom-logo');
+            if (storeConfig.logo) {
+                heroLogo.src = storeConfig.logo;
+                heroLogo.classList.remove('hidden');
+                heroIcon.classList.add('hidden');
+            } else {
+                heroLogo.classList.add('hidden');
+                heroIcon.classList.remove('hidden');
+            }
+
+            const bannerEl = document.getElementById('hero-banner');
+            bannerEl.style.backgroundImage = `linear-gradient(rgba(49, 46, 129, 0.85), rgba(49, 46, 129, 0.85)), url('${storeConfig.banner}')`;
+
             renderPrices();
             renderOrders();
             renderReports();
@@ -346,29 +371,19 @@
             if (view === 'settings') loadSettingsForm();
         }
 
-        // --- Fitur Portal ---
         function renderPrices() {
             const grid = document.getElementById('price-grid');
-            const p = storeConfig.prices;
-            const items = [
-                { n: "Kiloan Reguler", p: p.reg, u: "kg", i: "fa-scale-balanced" },
-                { n: "Kiloan Express", p: p.exp, u: "kg", i: "fa-bolt" },
-                { n: "Bedcover", p: p.bed, u: "pcs", i: "fa-bed" },
-                { n: "Sprei", p: p.spr, u: "pcs", i: "fa-mattress" },
-                { n: "Selimut", p: p.sel, u: "pcs", i: "fa-rug" },
-                { n: "Boneka", p: p.bon, u: "pcs", i: "fa-child" }
-            ];
-            grid.innerHTML = items.map(item => `
-                <div class="bg-white border border-slate-200 p-4 rounded-2xl text-center shadow-sm">
-                    <div class="w-10 h-10 mx-auto bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mb-2"><i class="fa-solid ${item.i}"></i></div>
-                    <h4 class="text-xs font-bold text-slate-700">${item.n}</h4>
-                    <p class="text-indigo-600 font-extrabold text-sm mt-1">${formatRp(item.p)}<span class="text-[9px] text-slate-400 font-normal">/${item.u}</span></p>
+            grid.innerHTML = storeConfig.services.map(s => `
+                <div class="bg-white border border-slate-200 p-4 rounded-2xl text-center shadow-sm hover:border-indigo-300 transition">
+                    <div class="w-10 h-10 mx-auto bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mb-2"><i class="fa-solid ${s.icon || 'fa-shirt'}"></i></div>
+                    <h4 class="text-xs font-bold text-slate-700 truncate">${s.name}</h4>
+                    <p class="text-indigo-600 font-extrabold text-sm mt-1">${formatRp(s.price)}<span class="text-[9px] text-slate-400 font-normal">/${s.unit}</span></p>
                 </div>
             `).join('');
         }
 
         function trackOrder() {
-            const query = document.getElementById('track-input').value.toLowerCase();
+            const query = document.getElementById('track-input').value.toLowerCase().trim();
             const res = document.getElementById('track-result');
             res.classList.remove('hidden');
             if(!query) return res.innerHTML = `<p class="text-rose-500 text-sm">Masukkan nomor resi atau HP.</p>`;
@@ -378,31 +393,25 @@
 
             let badgeColor = found.status.includes('Selesai') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
             res.innerHTML = `
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
                     <div class="flex justify-between items-center mb-2">
                         <span class="font-bold text-sm text-slate-800">${found.id}</span>
                         <span class="px-2 py-1 rounded text-[10px] font-bold ${badgeColor}">${found.status}</span>
                     </div>
                     <p class="text-xs text-slate-600">Pelanggan: <b>${found.name}</b></p>
                     <p class="text-xs text-slate-600">Layanan: ${found.service} (${found.qty})</p>
+                    <p class="text-xs text-slate-600">Parfum: ${found.parfum} | Estimasi: ${found.estimasi}</p>
                     <p class="text-xs text-slate-600">Total: <b class="text-indigo-600">${formatRp(found.total)}</b></p>
                 </div>
             `;
         }
 
-        // --- Fitur Kasir (POS) ---
         function openOrderModal() {
             document.getElementById('order-modal').classList.remove('hidden');
             const sel = document.getElementById('ord-service');
-            const p = storeConfig.prices;
-            sel.innerHTML = `
-                <option value="reg" data-price="${p.reg}" data-u="kg">Cuci Kiloan Reguler</option>
-                <option value="exp" data-price="${p.exp}" data-u="kg">Cuci Kiloan Express</option>
-                <option value="bed" data-price="${p.bed}" data-u="pcs">Bedcover</option>
-                <option value="spr" data-price="${p.spr}" data-u="pcs">Sprei</option>
-                <option value="sel" data-price="${p.sel}" data-u="pcs">Selimut</option>
-                <option value="bon" data-price="${p.bon}" data-u="pcs">Boneka</option>
-            `;
+            sel.innerHTML = storeConfig.services.map((s, idx) => `
+                <option value="${idx}" data-price="${s.price}" data-unit="${s.unit}">${s.name} (${formatRp(s.price)}/${s.unit})</option>
+            `).join('');
             document.getElementById('ord-name').value = '';
             document.getElementById('ord-phone').value = '';
             document.getElementById('ord-qty').value = '1';
@@ -413,8 +422,12 @@
 
         function calcTotal() {
             const sel = document.getElementById('ord-service');
-            const price = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0;
+            const selectedOpt = sel.options[sel.selectedIndex];
+            if (!selectedOpt) return;
+            const price = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+            const unit = selectedOpt.getAttribute('data-unit');
             const qty = parseFloat(document.getElementById('ord-qty').value) || 0;
+            document.getElementById('ord-qty-label').innerText = `Jumlah / Berat (${unit})`;
             document.getElementById('ord-total-display').innerText = formatRp(price * qty);
         }
 
@@ -423,7 +436,7 @@
             const sel = document.getElementById('ord-service');
             const opt = sel.options[sel.selectedIndex];
             const price = parseFloat(opt.getAttribute('data-price'));
-            const unit = opt.getAttribute('data-u');
+            const unit = opt.getAttribute('data-unit');
             const qty = parseFloat(document.getElementById('ord-qty').value);
             
             const newOrder = {
@@ -431,7 +444,7 @@
                 date: new Date().toLocaleDateString('id-ID'),
                 name: document.getElementById('ord-name').value,
                 phone: document.getElementById('ord-phone').value,
-                service: opt.text,
+                service: opt.text.split('(')[0].trim(),
                 qty: qty + " " + unit,
                 parfum: document.getElementById('ord-parfum').value,
                 estimasi: document.getElementById('ord-estimasi').value,
@@ -440,13 +453,12 @@
             };
 
             orders.unshift(newOrder);
-            saveToStorage(); // SIMPAN KE LOCALSTORAGE
-            
+            saveToStorage();
             closeOrderModal();
             renderOrders();
             renderReports();
-            printReceipt(newOrder); // Cetak otomatis
-            showToast("Transaksi Disimpan!");
+            printReceipt(newOrder);
+            showToast("Transaksi Disimpan & Struk Dicetak!");
         }
 
         function renderOrders() {
@@ -471,8 +483,9 @@
                             <option ${o.status === 'Sudah Diambil' ? 'selected' : ''}>Sudah Diambil</option>
                         </select>
                     </td>
-                    <td class="p-4 text-center">
-                        <button onclick='printReceipt(${JSON.stringify(o)})' class="p-2 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100"><i class="fa-solid fa-print"></i></button>
+                    <td class="p-4 text-center space-x-1">
+                        <button onclick='printReceipt(${JSON.stringify(o)})' class="p-2 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100" title="Cetak Struk"><i class="fa-solid fa-print"></i></button>
+                        <a href="https://wa.me/${o.phone}?text=Halo%20*${encodeURIComponent(o.name)}*,%20cucian%20Anda%20dengan%20No.%20Resi%20*${o.id}*%20saat%20ini%20statusnya:%20*${o.status}*.%20Terima%20kasih!" target="_blank" class="p-2 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100 inline-block" title="Kirim WA"><i class="fa-brands fa-whatsapp"></i></a>
                     </td>
                 </tr>
             `).join('');
@@ -480,28 +493,26 @@
 
         function updateStatus(index, status) {
             orders[index].status = status;
-            saveToStorage(); // SIMPAN KE LOCALSTORAGE
+            saveToStorage();
             renderReports();
             showToast("Status diupdate!");
         }
 
-        // --- Cetak Struk ---
         function printReceipt(o) {
             document.getElementById('print-name1').innerText = storeConfig.name;
             document.getElementById('print-name2').innerText = storeConfig.name;
             
             const content = `
-                <table style="width:100%; font-size:10px; margin-top:5px;">
+                <table style="width:100%; font-size:8px; margin-top:2px;">
                     <tr><td>Resi</td><td>: <b>${o.id}</b></td></tr>
                     <tr><td>Tgl</td><td>: ${o.date}</td></tr>
-                    <tr><td>Nama</td><td>: ${o.name}</td></tr>
-                    <tr><td>HP</td><td>: ${o.phone}</td></tr>
-                    <tr><td colspan="2" style="border-top:1px dashed #ccc; margin:3px 0;"></td></tr>
-                    <tr><td>Item</td><td>: ${o.service}</td></tr>
-                    <tr><td>Jml</td><td>: ${o.qty}</td></tr>
+                    <tr><td>Nama</td><td>: ${o.name} (${o.phone})</td></tr>
+                    <tr><td colspan="2" style="border-top:1px dashed #ccc; margin:1px 0;"></td></tr>
+                    <tr><td>Layanan</td><td>: ${o.service}</td></tr>
+                    <tr><td>Jumlah</td><td>: ${o.qty}</td></tr>
                     <tr><td>Parfum</td><td>: ${o.parfum}</td></tr>
                     <tr><td>Estimasi</td><td>: ${o.estimasi}</td></tr>
-                    <tr><td colspan="2" style="border-top:1px dashed #000; margin:3px 0;"></td></tr>
+                    <tr><td colspan="2" style="border-top:1px dashed #000; margin:1px 0;"></td></tr>
                     <tr><td><b>TOTAL</b></td><td>: <b>${formatRp(o.total)}</b></td></tr>
                 </table>
             `;
@@ -510,7 +521,6 @@
             window.print();
         }
 
-        // --- Laporan & Pengaturan ---
         function renderReports() {
             let omzet = 0, proses = 0, selesai = 0;
             orders.forEach(o => {
@@ -526,19 +536,89 @@
         function loadSettingsForm() {
             document.getElementById('set-name').value = storeConfig.name;
             document.getElementById('set-sub').value = storeConfig.subtitle;
-            const p = storeConfig.prices;
-            ['reg','exp','bed','spr','sel','bon'].forEach(k => document.getElementById(`set-p-${k}`).value = p[k]);
+            renderServiceRows();
+        }
+
+        function renderServiceRows() {
+            const container = document.getElementById('services-config-container');
+            container.innerHTML = storeConfig.services.map((s, index) => `
+                <div class="flex items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <input type="text" value="${s.name}" placeholder="Nama Layanan" class="flex-grow px-3 py-2 rounded-lg border border-slate-300 text-xs outline-none svc-name" data-index="${index}">
+                    <input type="number" value="${s.price}" placeholder="Harga" class="w-28 px-3 py-2 rounded-lg border border-slate-300 text-xs outline-none svc-price" data-index="${index}">
+                    <select class="w-24 px-2 py-2 rounded-lg border border-slate-300 text-xs outline-none svc-unit" data-index="${index}">
+                        <option value="kg" ${s.unit === 'kg' ? 'selected' : ''}>/kg</option>
+                        <option value="pcs" ${s.unit === 'pcs' ? 'selected' : ''}>/pcs</option>
+                        <option value="pasang" ${s.unit === 'pasang' ? 'selected' : ''}>/pasang</option>
+                    </select>
+                    <button type="button" onclick="removeServiceRow(${index})" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function addServiceRow() {
+            storeConfig.services.push({ name: "Layanan Baru", price: 10000, unit: "pcs", icon: "fa-shirt" });
+            renderServiceRows();
+        }
+
+        function removeServiceRow(index) {
+            if (storeConfig.services.length <= 1) return showToast("Minimal harus ada 1 layanan.");
+            storeConfig.services.splice(index, 1);
+            renderServiceRows();
         }
 
         function saveSettings(e) {
             e.preventDefault();
             storeConfig.name = document.getElementById('set-name').value;
             storeConfig.subtitle = document.getElementById('set-sub').value;
-            ['reg','exp','bed','spr','sel','bon'].forEach(k => storeConfig.prices[k] = parseFloat(document.getElementById(`set-p-${k}`).value));
             
-            saveToStorage(); // SIMPAN KE LOCALSTORAGE
-            initApp();
-            showToast("Pengaturan Tersimpan!");
+            // Ambil data layanan dari form dinamis
+            const nameInputs = document.querySelectorAll('.svc-name');
+            const priceInputs = document.querySelectorAll('.svc-price');
+            const unitInputs = document.querySelectorAll('.svc-unit');
+            
+            let updatedServices = [];
+            for (let i = 0; i < nameInputs.length; i++) {
+                updatedServices.push({
+                    name: nameInputs[i].value,
+                    price: parseFloat(priceInputs[i].value) || 0,
+                    unit: unitInputs[i].value,
+                    icon: storeConfig.services[i]?.icon || 'fa-shirt'
+                });
+            }
+            storeConfig.services = updatedServices;
+
+            const logoFile = document.getElementById('set-logo-file').files[0];
+            const bannerFile = document.getElementById('set-banner-file').files[0];
+
+            let pendingSaves = 0;
+            const checkDone = () => {
+                pendingSaves--;
+                if(pendingSaves <= 0) {
+                    saveToStorage();
+                    initApp();
+                    showToast("Pengaturan & Layanan Disimpan!");
+                }
+            };
+
+            if (logoFile) {
+                pendingSaves++;
+                const reader = new FileReader();
+                reader.onload = (evt) => { storeConfig.logo = evt.target.result; checkDone(); };
+                reader.readAsDataURL(logoFile);
+            }
+
+            if (bannerFile) {
+                pendingSaves++;
+                const reader = new FileReader();
+                reader.onload = (evt) => { storeConfig.banner = evt.target.result; checkDone(); };
+                reader.readAsDataURL(bannerFile);
+            }
+
+            if (pendingSaves === 0) {
+                saveToStorage();
+                initApp();
+                showToast("Pengaturan & Layanan Disimpan!");
+            }
         }
 
         function showToast(msg) {
